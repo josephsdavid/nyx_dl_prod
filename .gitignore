@@ -1,0 +1,9 @@
+venv/
+*.csv
+prod/
+.ropeproject/
+__pycache__/
+*.npy
+ckpts/
+*.ckpt
+result/*
