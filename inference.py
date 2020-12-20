@@ -46,7 +46,7 @@ def predict_vector(v: torch.tensor, model: AutoencoderModel) -> np.ndarray:
 
 def get_top_n(v: np.ndarray, index_list: List[int], n: int) -> List[int]:
     v[np.array(index_list)] = 0
-    return list(np.argpartition(-v, n)[:n])
+    return list(v.argsort()[-n:][::-1])
 
 
 def main(inputs: InputDict) -> List[int]:
@@ -54,14 +54,12 @@ def main(inputs: InputDict) -> List[int]:
     model = load_model()
     x, indices = input_to_vector(inputs, mapping)
     preds = predict_vector(x, model)
-    import pdb;pbd.set_trace()
-    top_n = get_top_n(preds, indices, 5)
+    top_n = get_top_n(preds, indices, 10)
     return list(top_n)
 
 
 if __name__ == "__main__":
-    # TODO: if movie not in movie mapping list of movies, return error (only popular movies are here)
-    movies = [v['title']  for v in load_mapping().values()][::3][-40:]
+    movies = [v['title']  for v in load_mapping().values()][::random.choice([2,3,5,-2,-3,-5])][-40:]
     scores = list(np.clip( 1., 6., (abs(np.random.rand(40)) * 5)))
     input = dict(zip(movies, scores))
     result = main(input)
@@ -69,4 +67,3 @@ if __name__ == "__main__":
     print(input)
     print("recomendations:")
     print(result)
-    import pdb; pdb.set_trace()
